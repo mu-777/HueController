@@ -21,7 +21,6 @@
         if (err) {
             throw err
         }
-
         hue.getData("config");
         julius.on('result', function (str) {
             console.log(str);
@@ -33,7 +32,7 @@
                 hue.turnOn();
             }
             if (str == wordList.trigger) {
-                hue.getData("config");
+
             }
         });
 

@@ -7,7 +7,6 @@
     'use strict';
 
     var Q = require("q"),
-        deferred = Q.defer(),
         request = require('request'),
         fs = require('fs'),
         huePropertyFilePath = "./hueProperty.json",
@@ -18,6 +17,7 @@
     }
 
     function connect() {
+        var deferred = Q.defer();
         request.post("http://" + hueProperty.internalipaddress + "/api",
             {
                 json: true,
@@ -39,6 +39,7 @@
     }
 
     function turnOnOff(flag) {
+        var deferred = Q.defer();
         request.put(getHueAddress() + "/groups/0/action",
             {
                 json: true,
@@ -64,6 +65,7 @@
     }
 
     function getData(command) {
+        var deferred = Q.defer();
         request(getHueAddress() + "/" + command,
             function (error, response, data) {
                 if (!error && response.statusCode == 200) {
@@ -77,16 +79,17 @@
     }
 
     function deleteUsernames() {
-        var d = Q.defer();
+        var deferred = Q.defer();
 
         request.get(getHueAddress() + "/config",
             function (error, response, data) {
                 if (err) {
                     console.log(err);
-                    d.reject(err);
+                    deferred.reject(err);
                 }
                 Object.keys(data["whitelist"]).map(function (username) {
                     return (function () {
+                        var d = Q.defer();
                         if (username == hueProperty.username) {
                             d.resolve();
                         } else {
