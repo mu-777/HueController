@@ -17,22 +17,30 @@
         grammar.add(wordList[key]);
     });
 
+    var triggered = false;
+
     grammar.compile(function (err, result) {
         if (err) {
             throw err
         }
         hue.getData("config");
+
+
         julius.on('result', function (str) {
             console.log(str);
 
-            if (str == wordList.turnOff) {
+            if (triggered && str == wordList.turnOff) { //いってきます
                 hue.turnOff();
             }
-            if (str == wordList.turnOn) {
+            if (triggered && str == wordList.turnOn) { //ただいま
                 hue.turnOn();
             }
             if (str == wordList.trigger) {
-
+                triggered = true;
+                setTimeout(function () {
+                    triggered = false;
+                    console.log("timeout");
+                }, 3000);
             }
         });
 

@@ -47,7 +47,6 @@
             },
             function (error, response, data) {
                 if (!error && response.statusCode == 200) {
-                    console.log(data);
                     deferred.resolve(data)
                 } else {
                     deferred.reject(error);
