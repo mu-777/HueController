@@ -1,0 +1,12 @@
+{
+  "hmm": "./voices/hmm.wav",
+  "tsunagattane": "./voices/chanto_tsunagattane.wav",
+  "jaane": "./voices/jaane.wav",
+  "oyasumi": "./voices/oyasumi.wav",
+  "jan": "./voices/jan.wav",
+  "okaeri": "./voices/okaeri.wav",
+  "konnichiwa": "./voices/konnichiwa.wav",
+  "pipo": "./voices/pipo.wav",
+  "pirorin": "./voices/pirorin.wav",
+  "hotto": "./voices/hotto.wav"
+}
