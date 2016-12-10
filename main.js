@@ -6,49 +6,91 @@
 (function () {
     'use strict';
     var Q = require("q"),
-        deferred = Q.defer(),
         Julius = require('julius'),
-        grammar = new Julius.Grammar(),
-        julius = new Julius(grammar.getJconf()),
+        hue = require("./hueController"),
+        dashButton = require('node-dash-button'),
+        voiceRes = require("./voiceResManager"),
         wordList = require("./wordList.json"),
-        hue = require("./hueController");
+        dashIDs = {"ag": "34:d2:70:89:ea:51"};
 
-    Object.keys(wordList).forEach(function (key) {
-        grammar.add(wordList[key]);
-    });
+    function voiceController() {
+        var grammar = new Julius.Grammar(),
+            julius = new Julius(grammar.getJconf()),
+            triggered = false;
 
-    var triggered = false;
-
-    grammar.compile(function (err, result) {
-        if (err) {
-            throw err
-        }
-        hue.getData("config");
-
-
-        julius.on('result', function (str) {
+        Object.keys(wordList).map(function (key) {
+            return wordList[key];
+        }).reduce(function (prev, curr) {
+            return prev.concat(curr);
+        }).forEach(function (str) {
             console.log(str);
+            grammar.add(str);
+        });
 
-            if (triggered && str == wordList.turnOff) { //いってきます
-                hue.turnOff();
+        grammar.compile(function (err, result) {
+            if (err) {
+                throw err
             }
-            if (triggered && str == wordList.turnOn) { //ただいま
-                hue.turnOn();
-            }
-            if (str == wordList.trigger) {
-                triggered = true;
-                setTimeout(function () {
+            hue.getData("config");
+            julius.on('result', function (str) {
+                console.log(str);
+                if (wordList.trigger.includes(str)) {
+                    triggered = true;
+                    voiceRes.hmm();
+                    setTimeout(function () {
+                        triggered = false;
+                        console.log("timeout");
+                    }, 4000);
+                }
+                if (triggered && wordList.goout.includes(str)) {
+                    voiceRes.jaane();
+                    hue.turnOff();
                     triggered = false;
-                    console.log("timeout");
-                }, 3000);
+                }
+                if (triggered && wordList.goodnight.includes(str)) {
+                    voiceRes.oyasumi();
+                    hue.turnOff();
+                    triggered = false;
+                }
+                if (triggered && wordList.comehome.includes(str)) {
+                    voiceRes.okaeri();
+                    hue.turnOn();
+                    triggered = false;
+                }
+                if (triggered && wordList.light.includes(str)) {
+
+                    hue.isON().then(function (isOn) {
+                        if (isOn) {
+                            voiceRes.hotto();
+                            hue.turnOff();
+                        } else {
+                            voiceRes.jan();
+                            hue.turnOn();
+                        }
+                        triggered = false;
+                    });
+                }
+            });
+            julius.on('error', function (str) {
+                console.error('ERROR', str);
+            });
+            julius.start();
+        });
+    }
+
+    function dashButtonController() {
+        var dash = dashButton("34:d2:70:89:ea:51", null, null, 'all');
+
+        dash.on("detected", function (dashid) {
+            if (dashid === dashIDs["ag"]) {
+                voiceRes.pirorin();
+                hue.toggle();
             }
         });
+    }
 
-        julius.on('error', function (str) {
-            console.error('ERROR', str);
-        });
+    voiceRes.konnichiwa();
+    voiceController();
+    dashButtonController();
 
-        julius.start();
-
-    });
 })();
