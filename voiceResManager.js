@@ -8,9 +8,19 @@
 
     var Q = require("q"),
         player = require("play-sound")(),
+        sound = require("node-aplay"),
         voiceList = require("./voiceList.json");
 
     function playVoice(path) {
+        var music = new sound(path);
+        return function () {
+            var deferred = Q.defer();
+            music.play();
+            return deferred.promise;
+        }
+    }
+
+    function _playVoice(path) {
         return function () {
             var deferred = Q.defer();
             player.play(path, function (err) {
