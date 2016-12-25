@@ -7,11 +7,11 @@
     'use strict';
 
     var Q = require("q"),
-        player = require("play-sound")(),
+        player = require("play-sound")({"player": "aplay"}),
         sound = require("node-aplay"),
         voiceList = require("./voiceList.json");
 
-    function playVoice(path) {
+    function _playVoice(path) {
         var music = new sound(path);
         return function () {
             var deferred = Q.defer();
@@ -20,10 +20,10 @@
         }
     }
 
-    function _playVoice(path) {
+    function playVoice(path) {
         return function () {
             var deferred = Q.defer();
-            player.play(path, function (err) {
+            player.play(path,{"aplay":["-Dhw:1,0"]}, function (err) {
                 if (err == null) {
                     deferred.resolve(null);
                 } else {
