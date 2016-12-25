@@ -88,6 +88,7 @@
         dash.on("detected", function (dashid) {
             if (dashid === dashIDs["ag"]) {
                 voiceRes.pirorin();
+		console.log("toggled");
                 hue.toggle();
             }
         });
