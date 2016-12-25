@@ -15,7 +15,6 @@
 
     function voiceController() {
         var grammar = new Julius.Grammar(),
-            julius = new Julius(grammar.getJconf()),
             triggered = false;
 
         Object.keys(wordList).map(function (key) {
@@ -29,8 +28,11 @@
 
         grammar.compile(function (err, result) {
             if (err) {
+                console.log("compile error");
                 throw err
             }
+            var julius = new Julius(grammar.getJconf());
+
             hue.getData("config");
             julius.on('result', function (str) {
                 console.log(str);
@@ -76,6 +78,8 @@
             });
             julius.start();
         });
+        console.log(hue.getData());
+
     }
 
     function dashButtonController() {
