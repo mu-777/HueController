@@ -36,7 +36,7 @@
             hue.getData("config");
             julius.on('result', function (str) {
                 console.log(str);
-                if (wordList.trigger.includes(str)) {
+                if (!triggered && wordList.trigger.includes(str)) {
                     triggered = true;
                     voiceRes.hmm();
                     setTimeout(function () {
